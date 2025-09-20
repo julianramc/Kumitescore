@@ -23,13 +23,25 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
     }
     
-    .competitor-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* Separating AKA (red) and AO (blue) competitor sections */
+    .competitor-section-aka {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
         color: white;
         padding: 1.5rem;
         border-radius: 15px;
         margin: 1rem 0;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        box-shadow: 0 8px 32px rgba(220,53,69,0.3);
+        border: 3px solid #dc3545;
+    }
+    
+    .competitor-section-ao {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin: 1rem 0;
+        box-shadow: 0 8px 32px rgba(0,123,255,0.3);
+        border: 3px solid #007bff;
     }
     
     .competitor-name {
@@ -48,7 +60,7 @@ st.markdown("""
     }
     
     .timer-section {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
         color: white;
         padding: 2rem;
         border-radius: 15px;
@@ -64,22 +76,34 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
     
-    .penalty-section {
-        background: #f8f9fa;
+    /* Different penalty section colors for AKA and AO */
+    .penalty-section-aka {
+        background: #f8d7da;
         padding: 1rem;
         border-radius: 10px;
         border-left: 5px solid #dc3545;
         margin: 1rem 0;
+        color: #721c24;
+    }
+    
+    .penalty-section-ao {
+        background: #d1ecf1;
+        padding: 1rem;
+        border-radius: 10px;
+        border-left: 5px solid #007bff;
+        margin: 1rem 0;
+        color: #0c5460;
     }
     
     .senshu-indicator {
-        background: #28a745;
-        color: white;
+        background: #ffc107;
+        color: #212529;
         padding: 0.5rem 1rem;
         border-radius: 20px;
         font-weight: bold;
         display: inline-block;
         margin: 0.5rem;
+        box-shadow: 0 2px 8px rgba(255,193,7,0.4);
     }
     
     .victory-banner {
@@ -380,12 +404,12 @@ col1, col2 = st.columns(2)
 
 # Competidor AKA (Izquierda)
 with col1:
-    st.markdown('<div class="competitor-section">', unsafe_allow_html=True)
-    st.markdown(f'<div class="competitor-name">{aka_name} (AKA)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="competitor-section-aka">', unsafe_allow_html=True)
+    st.markdown(f'<div class="competitor-name">🔴 {aka_name} (AKA)</div>', unsafe_allow_html=True)
     
     # Indicador Senshu
     if st.session_state.senshu == 'aka':
-        st.markdown('<div class="senshu-indicator">SENSHU</div>', unsafe_allow_html=True)
+        st.markdown('<div class="senshu-indicator">⭐ SENSHU</div>', unsafe_allow_html=True)
     
     # Puntuación
     st.markdown(f'<div class="score-display">{st.session_state.aka_score}</div>', unsafe_allow_html=True)
@@ -424,7 +448,7 @@ with col1:
     
     # Mostrar penalizaciones actuales
     if any(st.session_state.aka_penalties.values()):
-        st.markdown('<div class="penalty-section">', unsafe_allow_html=True)
+        st.markdown('<div class="penalty-section-aka">', unsafe_allow_html=True)
         st.markdown("**Penalizaciones actuales:**")
         if st.session_state.aka_penalties['chukoku'] > 0:
             st.write(f"Chukoku: {st.session_state.aka_penalties['chukoku']}")
@@ -444,12 +468,12 @@ with col1:
 
 # Competidor AO (Derecha)
 with col2:
-    st.markdown('<div class="competitor-section">', unsafe_allow_html=True)
-    st.markdown(f'<div class="competitor-name">{ao_name} (AO)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="competitor-section-ao">', unsafe_allow_html=True)
+    st.markdown(f'<div class="competitor-name">🔵 {ao_name} (AO)</div>', unsafe_allow_html=True)
     
     # Indicador Senshu
     if st.session_state.senshu == 'ao':
-        st.markdown('<div class="senshu-indicator">SENSHU</div>', unsafe_allow_html=True)
+        st.markdown('<div class="senshu-indicator">⭐ SENSHU</div>', unsafe_allow_html=True)
     
     # Puntuación
     st.markdown(f'<div class="score-display">{st.session_state.ao_score}</div>', unsafe_allow_html=True)
@@ -488,7 +512,7 @@ with col2:
     
     # Mostrar penalizaciones actuales
     if any(st.session_state.ao_penalties.values()):
-        st.markdown('<div class="penalty-section">', unsafe_allow_html=True)
+        st.markdown('<div class="penalty-section-ao">', unsafe_allow_html=True)
         st.markdown("**Penalizaciones actuales:**")
         if st.session_state.ao_penalties['chukoku'] > 0:
             st.write(f"Chukoku: {st.session_state.ao_penalties['chukoku']}")
@@ -526,37 +550,3 @@ with col1:
 with col2:
     if st.button("⚡ Hansoku AKA", key="hansoku_aka"):
         add_penalty('aka', 'hansoku')
-
-with col3:
-    if st.button("⚡ Hansoku AO", key="hansoku_ao"):
-        add_penalty('ao', 'hansoku')
-
-# Información de controles de teclado
-with st.expander("⌨️ Controles de Teclado", expanded=False):
-    st.markdown("""
-    **Competidor AKA (Izquierda):**
-    - Q: Yuko (1 punto)
-    - W: Waza-ari (2 puntos)  
-    - E: Ippon (3 puntos)
-    - A: Chukoku
-    - S: Keikoku
-    - D: Hansoku-chui
-    - Z: Reset AKA
-    
-    **Competidor AO (Derecha):**
-    - U: Yuko (1 punto)
-    - I: Waza-ari (2 puntos)
-    - O: Ippon (3 puntos)
-    - J: Chukoku
-    - K: Keikoku
-    - L: Hansoku-chui
-    - M: Reset AO
-    
-    **Controles de Tiempo:**
-    - Espacio: Start/Pause
-    - R: Reset Timer
-    """)
-
-# Auto-refresh para el temporizador
-if st.session_state.timer_running:
-    tim
